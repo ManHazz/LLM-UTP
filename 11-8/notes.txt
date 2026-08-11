@@ -1,0 +1,293 @@
+LAN IP: 172.17.102.123/24
+Host Alias: PC A
+Kernel Version: 6.17.0-1024-oem -> 6.17.0-1017-oem (rebooted via grub, see hardware_notes.txt)
+Model Used: DeepSeek R1 Distill Qwen 14B Q4 KV
+
+
+## Ping Test (A -> B)
+ping 172.17.102.3 
+
+	PING 172.17.102.3 (172.17.102.3) 56(84) bytes of data.
+	64 bytes from 172.17.102.3: icmp_seq=1 ttl=64 time=2.53 ms
+	64 bytes from 172.17.102.3: icmp_seq=2 ttl=64 time=1.06 ms
+	64 bytes from 172.17.102.3: icmp_seq=3 ttl=64 time=1.09 ms
+	64 bytes from 172.17.102.3: icmp_seq=4 ttl=64 time=1.13 ms
+	64 bytes from 172.17.102.3: icmp_seq=5 ttl=64 time=1.27 ms
+	64 bytes from 172.17.102.3: icmp_seq=6 ttl=64 time=0.659 ms
+	64 bytes from 172.17.102.3: icmp_seq=7 ttl=64 time=0.577 ms
+	64 bytes from 172.17.102.3: icmp_seq=8 ttl=64 time=0.409 ms
+	64 bytes from 172.17.102.3: icmp_seq=9 ttl=64 time=1.58 ms
+	64 bytes from 172.17.102.3: icmp_seq=10 ttl=64 time=0.685 ms
+	^C
+	--- 172.17.102.3 ping statistics ---
+	10 packets transmitted, 10 received, 0% packet loss, time 9085ms
+	rtt min/avg/max/mdev = 0.409/1.100/2.534/0.586 ms
+
+## Ping test (B -> A)
+sudo tcpdump -i any icmp
+
+	tcpdump: data link type LINUX_SLL2
+	tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+	listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+	11:43:38.452011 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 1, length 64
+	11:43:38.452077 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 1, length 64
+	11:43:39.453037 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 2, length 64
+	11:43:39.453092 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 2, length 64
+	11:43:40.453998 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 3, length 64
+	11:43:40.454056 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 3, length 64
+	11:43:41.454957 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 4, length 64
+	11:43:41.455010 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 4, length 64
+	11:43:42.456529 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 5, length 64
+	11:43:42.456588 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 5, length 64
+	11:43:43.458584 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 6, length 64
+	11:43:43.458641 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 6, length 64
+	11:43:44.460453 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 7, length 64
+	11:43:44.460510 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 7, length 64
+	11:43:45.462448 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 8, length 64
+	11:43:45.462506 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 8, length 64
+	11:43:46.464252 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 9, length 64
+	11:43:46.464311 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 9, length 64
+	11:43:47.466065 enp128s31f6 In  IP 172.17.102.3 > 230007-02: ICMP echo request, id 118, seq 10, length 64
+	11:43:47.466124 enp128s31f6 Out IP 230007-02 > 172.17.102.3: ICMP echo reply, id 118, seq 10, length 64
+	^C
+	20 packets captured
+	20 packets received by filter
+	0 packets dropped by kernel
+
+### Ping test results:
+	PC A and PC B are reachable both ways locally
+	
+	
+	
+## Software Checks
+> nvcc and cmake missing, sudo apt install -y nvidia-cuda-toolkit cmake build-essential git
+
+## llama.cpp repo cloning
+git clone https://github.com/ggml-org/llama.cpp
+
+cmake -B build -DGGML_CUDA=ON -DGGML_RPC=ON
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMAKE_BUILD_TYPE=Release
+-- Found Git: /usr/bin/git (found version "2.43.0") 
+-- The ASM compiler identification is GNU
+-- Found assembler: /usr/bin/cc
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+-- CMAKE_SYSTEM_PROCESSOR: x86_64
+-- GGML_SYSTEM_ARCH: x86
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- Found OpenMP: TRUE (found version "4.5")  
+-- Including CPU backend
+-- x86 detected
+-- Adding CPU backend variant ggml-cpu: -march=native 
+-- Found CUDAToolkit: /usr/include (found version "12.0.140")
+-- CUDA Toolkit found
+-- The CUDA compiler identification is NVIDIA 12.0.140
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Using CMAKE_CUDA_ARCHITECTURES=86-real CMAKE_CUDA_ARCHITECTURES_NATIVE=86-real
+-- Could NOT find NCCL (missing: NCCL_LIBRARY NCCL_INCLUDE_DIR) 
+-- Warning: NCCL not found, performance for multiple CUDA GPUs will be suboptimal
+-- CUDA host compiler is GNU 12.4.0
+-- Including CUDA backend
+-- Using RPC backend
+--   RDMA transport disabled
+-- Including RPC backend
+-- ggml version: 0.19.0
+-- ggml commit:  153d324bc
+-- Could NOT find OpenSSL, try to set the path to OpenSSL root folder in the system variable OPENSSL_ROOT_DIR (missing: OPENSSL_CRYPTO_LIBRARY OPENSSL_INCLUDE_DIR) 
+CMake Warning at vendor/cpp-httplib/CMakeLists.txt:152 (message):
+  OpenSSL not found, HTTPS support disabled
+
+
+-- Generating embedded license file for target: llama-app
+-- Configuring done (4.5s)
+-- Generating done (0.1s)
+-- Build files have been written to: /mnt/LLM/llama.cpp/build
+
+## cmake --build build --config Release -j$(nproc)
+
+
+### 1 PC Test
+## checking model usage
+user@230007-02:/mnt/LLM/llama.cpp$ ./build/bin/llama-cli 
+	-m /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf 
+	-ngl 999 
+	-p "Write me a short haiku abt distributed computing." 
+	-n 128 
+	--no-display-prompt 2>&1 | tail -30
+
+
+Loading model... Error: the server exited before becoming ready
+0.02.162.549 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 8148.38 MiB on device 0: cudaMalloc failed: out of memory
+0.02.162.553 E alloc_tensor_range: failed to allocate CUDA0 buffer of size 8544198656
+0.02.205.140 E llama_model_load: error loading model: unable to allocate CUDA0 buffer
+0.02.205.148 E llama_model_load_from_file_impl: failed to load model
+0.02.205.153 E cmn  common_init_: failed to load model '/mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf'
+0.02.205.161 E srv    load_model: failed to load model, '/mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf'
+llama_server exited with code 1
+0.02.207.130 E srv  llama_server: exiting due to model loading error
+
+## corrected command, reduced ngl --$./build/bin/llama-cli -m /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf -ngl 999 -p "Write me a short haiku abt distributed computing." -n 128 --no-display-prompt 2>&1 | tail -30
+
+Loading model...  
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b10364-153d324bc
+model      : /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> Write me a short haiku abt distributed computing.
+
+[Start thinking]
+
+
+Okay, the user wants a haiku about distributed computing. Hmm, let me break this down.
+
+First, I know a haiku is a three-line poem with a 5-7-5 syllable structure. So I need to make sure each line fits that.
+
+Distributed computing involves multiple computers working together, so I should include imagery related to that. Maybe something about nodes or connections.
+
+I need to capture the essence of collaboration and efficiency. Let me think of some keywords: nodes, connections, data, speed, harmony.
+
+For the first line, maybe something about individual parts. "Silent nodes hum" –
+
+[ Prompt: 31.6 t/s | Generation: 10.1 t/s ]
+
+
+
+## verify builds (cd llama.cpp)
+ls build/bin/ggml-rpc-server
+ls build/bin/llama-cli
+
+### Multiple PC Test
+## ssh into worker nodes
+./build/bin/ggml-rpc-server -H 0.0.0.0 -p 50052
+# start workers
+
+## 2 PC (PC-A, PC-B)
+./build/bin/llama-cli 
+	-m /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf 
+	--rpc 172.17.102.3:50052 
+	-ngl 999 
+	-p "Write me a short haiku abt distributed computing." 
+	-n 128 
+	--no-display-prompt 2>&1 | tail -30
+	
+Loading model...  
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b10364-153d324bc
+model      : /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> Write me a short haiku abt distributed computing.
+
+[Start thinking]
+
+
+Okay, so I need to write a short haiku about distributed computing. Hmm, I'm not super familiar with all the terms, but I know it's about computers working together on a task. Let me think about what that involves.
+
+Distributed computing means multiple computers, or nodes, working on a problem at the same time. So maybe I can mention nodes or tasks. They work together, so collaboration is a good theme.
+
+In the first line, maybe something about the number of nodes or tasks. Like "Many tasks" or "Multiple minds." That sounds poetic. 
+
+The second line should connect to the first and
+
+[ Prompt: 110.5 t/s | Generation: 18.6 t/s ]
+
+
+## 4 PC (PC-A, PC-B, PC-C, PC-D)
+./build/bin/llama-cli 
+	-m /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf 
+	--rpc 172.17.102.3:50052,172.17.102.107:50052,172.17.102.39:50052    ## dont put whitespace in between ips
+	-ngl 999 
+	-p "Write me a short haiku abt distributed computing." 
+	-n 128 
+	--no-display-prompt 2>&1 | tail -30
+	
+Loading model...  
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b10364-153d324bc
+model      : /mnt/LLM/models/DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> Write me a short haiku abt distributed computing.
+
+[Start thinking]
+
+
+Okay, so I need to write a short haiku about distributed computing. Hmm, let me break this down. First, what's a haiku? It's a traditional Japanese poem with three lines. The syllable structure is 5-7-5. That means the first line has 5 syllables, the second has 7, and the third goes back to 5.
+
+Now, distributed computing. I remember it's about coordinating processes across multiple computers. It's like each computer does a part of the work, and they communicate to achieve a common goal. So, key terms might be nodes, processes,
+
+[ Prompt: 51.9 t/s | Generation: 16.7 t/s ]

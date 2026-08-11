@@ -1,0 +1,42 @@
+# Model weights (should live on the lab PCs, not in git)
+*.gguf
+*.safetensors
+*.bin
+models/
+
+# Build artifacts
+build/
+build-*/
+*.o
+*.so
+*.so.*
+
+# Python caches
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Secrets / local config
+.env
+.env.*
+*.key
+*_key
+id_rsa
+id_ed25519
+
+# Logs
+*.log
+logs/
+
+# Downloaded archives
+*.tgz
+*.tar.gz
+*.zip

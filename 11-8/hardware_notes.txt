@@ -1,0 +1,29 @@
+there was a kernel version mismatch with the nvidia drivers, so i rebooted to another kernel version from grub.
+
+nvidia-smi
+Tue Aug 11 13:54:05 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX A1000               Off |   00000000:01:00.0  On |                  N/A |
+| 30%   46C    P8            N/A  /   50W |     185MiB /   8188MiB |      8%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            3138      G   /usr/lib/xorg/Xorg                       68MiB |
+|    0   N/A  N/A            3382      G   /usr/bin/gnome-shell                     89MiB |
++-----------------------------------------------------------------------------------------+
+
+
+Key takeaways: 8Gb VRAMs, NVIDIA RTX A1000 (Ampere, compute cap 8.6), CUDA 13.0 (compatible) :>
+
+

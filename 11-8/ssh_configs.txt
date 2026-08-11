@@ -1,0 +1,38 @@
+Current machine: PC A
+
+## setting up openssh-server on the other nodes
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+ip -4 addr | grep 'inet' | grep -v 127
+whoami -> user
+hostname -> machine name (230...)
+
+PC   | Hostname  | IP               | User |
+PC-B | 230007-03 | 172.17.102.3     | user |
+PC-C | 230007-01 | 172.17.102.107   | user |
+PC-D | 230007-04 | 172.17.102.39    | user |
+PC-E | 230007-05 | 172.17.102.99    | user | #id not copied yet
+PC-F | 230007-07 | 172.17.102.1     | user | #id not copied yet
+PC-G | 230007-08 | 172.17.102.100   | user | #id not copied yet
+PC-H | 230007-09 | 172.17.102.131   | user | #id not copied yet
+
+# Generating ssh key
+ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
+Generating public/private ed25519 key pair.
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:LVH//6KaRt4A+fwuEY04X1Z2xmwNu9HyAro0MdBzR5E user@230007-02
+The key's randomart image is:
++--[ED25519 256]--+
+|        ...  .+*.|
+|         oo.. EoB|
+|        .oo=o+++.|
+|        =oo++o = |
+|        S*=+  + .|
+|         oBo   o |
+|         o.=    .|
+|          +.o . .|
+|         .o+o. ..|
++----[SHA256]-----+
+
